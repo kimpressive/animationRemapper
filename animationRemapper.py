@@ -4,10 +4,6 @@ import json
 import time
 from maya.mel import eval as meleval
 
-#Run script with:
-#import animationRemapper;
-#animationRemapper.AnimationRemapper()
-
 
 class AnimationRemapper():
     """
@@ -93,7 +89,9 @@ class AnimationRemapper():
         AnimationRemapper._mapTimeList      = []
 
         #Start the scriptNode and set the currentTime to the start of the timerange
-        self.scriptNode.before.set("import animationRemapper_v2; animationRemapper_v2.scriptNodeCall()")    #Activate the scriptNode
+        module = __name__
+        #Activate the scriptNode
+        self.scriptNode.before.set("import {0}; {0}.scriptNodeCall()".format(module))
         pm.currentTime(AnimationRemapper._startTime) #Setting the time to start time resets the dict
 
     def stopRecording(self):
@@ -243,9 +241,7 @@ class AnimationRemapper():
         for selObj in self._selectedObjects:
             pm.keyframe(selObj, e=1, relative=1, t=(lastDictKey, lastKey), tc=(moveVal))
 
-#
-#
-#
+
 def scriptNodeCall():
     #This is called by the script node to update the dict
     ct = meleval( "currentTime -q" )
